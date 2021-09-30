@@ -24,6 +24,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("/scorlights/")
     # Subscribe to this device's topic.
     client.subscribe("/scorlights/+/+/" + device_id + "/")
+    reportState()
 
 # the callback function, it will be triggered when receiving messages
 def on_message(client, userdata, msg):
@@ -39,9 +40,11 @@ def on_message(client, userdata, msg):
         if (light == 0):
             GPIO.output(outputPin, GPIO.HIGH)
             light = 1
+            reportState()
         else:
             GPIO.output(outputPin, GPIO.LOW)
             light = 0
+            reportState()
     
     # If message is stateChange. 
     # Turn on.
@@ -49,16 +52,19 @@ def on_message(client, userdata, msg):
         if (light == 0):
             GPIO.output(outputPin, GPIO.HIGH)
             light = 1
+            reportState()
     # Turn off.
     if (message[1] == "off"):
         if (light == 1):
             GPIO.output(outputPin, GPIO.LOW)
             light = 0
+            reportState()
 
-# Report the light state back to the backend. (if needed)
+# Report the light state back to the backend. So that it can be displayed on a user interface. (if needed)
 def reportState():
-    #Send the current light
-    print("Current light state: " + light)
+    #Send the current light state.
+    client.publish('/scorlights/statereport/' + device_id + "/", payload=light, qos=0, retain=False)
+    print(light)
 
 # Connect to the MQTT client.
 client = mqtt.Client()
