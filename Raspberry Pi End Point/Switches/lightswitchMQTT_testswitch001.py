@@ -37,7 +37,7 @@ while True: # Run forever
 
         # The four parameters are topic (in this case as a switch with the device id), sending content (this is a toggle switch), QoS and whether retaining the message respectively
         client.publish('/scorlights/switch/' + device_id + "/", payload=message, qos=0, retain=False)
-        print(f"send {message} to /scorlights/switch/testswitch/")
+        print(f"send {message} to /scorlights/switch/" + device_id + "/")
         
         # Sleep for 2 seconds as not to flood messages.
         time.sleep(2)
